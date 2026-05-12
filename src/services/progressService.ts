@@ -1,6 +1,8 @@
 import { achievements } from '../data/content';
 import type { Challenge, ChallengeResult, ChallengeSubmission, GameUser, UserProgress } from '../types';
 import { createId, readJson, writeJson } from '../lib/storage';
+import { doc, getDoc, runTransaction, setDoc } from 'firebase/firestore';
+import { firebaseReady, getFirebaseDb } from '../lib/firebase';
 import { evaluateChallenge, levelFromXp, resolveAchievementUnlocks } from '../lib/engine';
 
 const PROGRESS_KEY = 'gamneos.progress';
@@ -11,6 +13,15 @@ function readAllProgress(): Record<string, UserProgress> {
 
 function writeAllProgress(progressMap: Record<string, UserProgress>): void {
   writeJson(PROGRESS_KEY, progressMap);
+}
+
+function getProgressRef(userId: string) {
+  const db = getFirebaseDb();
+  if (!db) {
+    throw new Error('Firebase is not configured.');
+  }
+
+  return doc(db, 'progress', userId);
 }
 
 function createEmptyProgress(userId: string): UserProgress {
@@ -24,7 +35,37 @@ function createEmptyProgress(userId: string): UserProgress {
   };
 }
 
-export function ensureProgressRecord(user: GameUser): UserProgress {
+function normalizeProgress(userId: string, value: Partial<UserProgress> | undefined): UserProgress {
+  const fallback = createEmptyProgress(userId);
+
+  if (!value) {
+    return fallback;
+  }
+
+  return {
+    userId,
+    totalXp: value.totalXp ?? 0,
+    completedChallengeIds: value.completedChallengeIds ?? [],
+    unlockedAchievementIds: value.unlockedAchievementIds ?? [],
+    attempts: value.attempts ?? [],
+    lastPlayedAt: value.lastPlayedAt,
+  };
+}
+
+export async function ensureProgressRecord(user: GameUser): Promise<UserProgress> {
+  if (firebaseReady) {
+    const ref = getProgressRef(user.id);
+    const snapshot = await getDoc(ref);
+
+    if (snapshot.exists()) {
+      return normalizeProgress(user.id, snapshot.data() as Partial<UserProgress>);
+    }
+
+    const fresh = createEmptyProgress(user.id);
+    await setDoc(ref, fresh, { merge: true });
+    return fresh;
+  }
+
   const progressMap = readAllProgress();
   const existing = progressMap[user.id];
 
@@ -38,16 +79,83 @@ export function ensureProgressRecord(user: GameUser): UserProgress {
   return fresh;
 }
 
-export function getProgress(userId: string): UserProgress {
+export async function getProgress(userId: string): Promise<UserProgress> {
+  if (firebaseReady) {
+    const ref = getProgressRef(userId);
+    const snapshot = await getDoc(ref);
+    return normalizeProgress(userId, snapshot.exists() ? (snapshot.data() as Partial<UserProgress>) : undefined);
+  }
+
   const progressMap = readAllProgress();
   return progressMap[userId] ?? createEmptyProgress(userId);
 }
 
-export function completeChallenge(
+export async function completeChallenge(
   user: GameUser,
   challenge: Challenge,
   submission: ChallengeSubmission,
-): ChallengeResult {
+): Promise<ChallengeResult> {
+  if (firebaseReady) {
+    const ref = getProgressRef(user.id);
+
+    return runTransaction(getFirebaseDb()!, async (transaction) => {
+      const snapshot = await transaction.get(ref);
+      const current = normalizeProgress(user.id, snapshot.exists() ? (snapshot.data() as Partial<UserProgress>) : undefined);
+      const evaluation = evaluateChallenge(challenge, submission);
+      const alreadyCompleted = current.completedChallengeIds.includes(challenge.id);
+      const earnedXp = alreadyCompleted ? 0 : evaluation.earnedXp;
+      const nextCompletedChallengeIds = alreadyCompleted
+        ? current.completedChallengeIds
+        : [...current.completedChallengeIds, challenge.id];
+      const attempt = {
+        id: createId(),
+        challengeId: challenge.id,
+        score: evaluation.score,
+        totalQuestions: evaluation.totalQuestions,
+        earnedXp,
+        completedAt: new Date().toISOString(),
+      };
+
+      const nextProgress: UserProgress = {
+        ...current,
+        totalXp: current.totalXp + earnedXp,
+        completedChallengeIds: nextCompletedChallengeIds,
+        attempts: [attempt, ...current.attempts].slice(0, 12),
+        lastPlayedAt: attempt.completedAt,
+      };
+
+      nextProgress.unlockedAchievementIds = [
+        ...new Set([
+          ...current.unlockedAchievementIds,
+          ...resolveAchievementUnlocks(
+            {
+              ...nextProgress,
+              unlockedAchievementIds: current.unlockedAchievementIds,
+            },
+            achievements,
+          ),
+        ]),
+      ];
+
+      const storedProgress = {
+        ...nextProgress,
+        level: levelFromXp(nextProgress.totalXp),
+      } as UserProgress & { level?: number };
+
+      transaction.set(ref, storedProgress, { merge: true });
+
+      return {
+        ...evaluation,
+        earnedXp,
+        alreadyCompleted,
+        newlyUnlockedAchievementIds: nextProgress.unlockedAchievementIds.filter(
+          (achievementId) => !current.unlockedAchievementIds.includes(achievementId),
+        ),
+        attempt,
+      };
+    });
+  }
+
   const progressMap = readAllProgress();
   const current = progressMap[user.id] ?? createEmptyProgress(user.id);
   const evaluation = evaluateChallenge(challenge, submission);
@@ -103,8 +211,8 @@ export function completeChallenge(
   };
 }
 
-export function getProgressSnapshot(userId: string) {
-  const progress = getProgress(userId);
+export async function getProgressSnapshot(userId: string) {
+  const progress = await getProgress(userId);
   return {
     ...progress,
     level: levelFromXp(progress.totalXp),

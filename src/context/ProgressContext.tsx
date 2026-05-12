@@ -11,8 +11,8 @@ interface ProgressContextValue {
   attemptsCount: number;
   recentChallengeIds: string[];
   unlockedAchievementIds: string[];
-  completeChallenge: (challengeId: string, submission: ChallengeSubmission) => ChallengeResult;
-  refreshProgress: () => void;
+  completeChallenge: (challengeId: string, submission: ChallengeSubmission) => Promise<ChallengeResult>;
+  refreshProgress: () => Promise<void>;
 }
 
 const ProgressContext = createContext<ProgressContextValue | undefined>(undefined);
@@ -22,24 +22,36 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState<UserProgress | null>(null);
 
   useEffect(() => {
+    let active = true;
+
     if (!user) {
       setProgress(null);
       return;
     }
 
-    setProgress(getProgressSnapshot(user.id));
+    async function bootstrapProgress() {
+      const snapshot = await getProgressSnapshot(user.id);
+      if (active) {
+        setProgress(snapshot);
+      }
+    }
+    void bootstrapProgress();
+
+    return () => {
+      active = false;
+    };
   }, [user]);
 
-  function refreshProgress() {
+  async function refreshProgress() {
     if (!user) {
       setProgress(null);
       return;
     }
 
-    setProgress(getProgressSnapshot(user.id));
+    setProgress(await getProgressSnapshot(user.id));
   }
 
-  function completeChallenge(challengeId: string, submission: ChallengeSubmission) {
+  async function completeChallenge(challengeId: string, submission: ChallengeSubmission) {
     if (!user) {
       throw new Error('You must be signed in to complete a challenge.');
     }
@@ -49,8 +61,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       throw new Error('Challenge not found.');
     }
 
-    const result = completeChallengeRecord(user, challenge, submission);
-    setProgress(getProgressSnapshot(user.id));
+    const result = await completeChallengeRecord(user, challenge, submission);
+    setProgress(await getProgressSnapshot(user.id));
     return result;
   }
 

@@ -52,14 +52,14 @@ export function ChallengePage() {
     setAnswers((current) => ({ ...current, [questionId]: optionIndex }));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const activeChallenge = challenge;
     if (!activeChallenge) {
       throw new Error('Mission unavailable.');
     }
 
     const submission: ChallengeSubmission = { answers };
-    const nextResult = completeChallenge(activeChallenge.id, submission);
+    const nextResult = await completeChallenge(activeChallenge.id, submission);
     setResult(nextResult);
   }
 
@@ -156,7 +156,7 @@ export function ChallengePage() {
           ))}
 
           <div className="button-row sticky-actions">
-            <Button onClick={handleSubmit}>Submit mission</Button>
+            <Button onClick={() => void handleSubmit()}>Submit mission</Button>
             <Link className="button button-ghost" to="/app">
               Save for later
             </Link>
