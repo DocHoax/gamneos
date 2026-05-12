@@ -23,14 +23,17 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
+    const activeUser = user;
 
-    if (!user) {
+    if (!activeUser) {
       setProgress(null);
       return;
     }
 
+    const userId = activeUser.id;
+
     async function bootstrapProgress() {
-      const snapshot = await getProgressSnapshot(user.id);
+      const snapshot = await getProgressSnapshot(userId);
       if (active) {
         setProgress(snapshot);
       }
