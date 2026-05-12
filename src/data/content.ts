@@ -1,0 +1,282 @@
+import type { Achievement, Challenge, Topic } from '../types';
+
+export const topics: Topic[] = [
+  {
+    id: 'phishing-awareness',
+    title: 'Phishing Awareness',
+    description: 'Spot urgency tricks, spoofed links, and fake login prompts before they land.',
+    accent: '#57d6ff',
+    challengeIds: ['phish-hunter', 'inbox-triage'],
+  },
+  {
+    id: 'password-defense',
+    title: 'Password Defense',
+    description: 'Build habits that keep credentials unique, strong, and recoverable.',
+    accent: '#8dffcf',
+    challengeIds: ['vault-builder'],
+  },
+  {
+    id: 'device-hygiene',
+    title: 'Device Hygiene',
+    description: 'Lock down endpoints, patch fast, and avoid common network traps.',
+    accent: '#ffb86b',
+    challengeIds: ['secure-terminal'],
+  },
+];
+
+export const challenges: Challenge[] = [
+  {
+    id: 'phish-hunter',
+    topicId: 'phishing-awareness',
+    title: 'Phish Hunter',
+    summary: 'Call out the red flags hidden in a fake account alert.',
+    story: 'Your inbox lights up with a warning that your account will be suspended in 15 minutes unless you verify now.',
+    difficulty: 'Beginner',
+    xpReward: 100,
+    questions: [
+      {
+        id: 'phish-hunter-q1',
+        prompt: 'Which detail is the strongest phishing signal?',
+        options: [
+          'The email uses your first name in the greeting',
+          'The message creates immediate pressure to act',
+          'The logo is centered at the top',
+          'The sender has a professional title',
+        ],
+        correctIndex: 1,
+        explanation: 'Urgency is a classic phishing tactic because it pushes people to skip verification.',
+      },
+      {
+        id: 'phish-hunter-q2',
+        prompt: 'What should you do before clicking the verification button?',
+        options: [
+          'Open it immediately before the deadline expires',
+          'Forward it to everyone in the team',
+          'Check the real sender address and open the account through the official site',
+          'Reply asking for a better deal',
+        ],
+        correctIndex: 2,
+        explanation: 'Always navigate to the official site yourself instead of trusting the email link.',
+      },
+      {
+        id: 'phish-hunter-q3',
+        prompt: 'What is the safest reaction to a suspicious attachment?',
+        options: [
+          'Open it in case it contains invoices',
+          'Scan it and verify with the sender through a separate channel',
+          'Rename the file before opening',
+          'Move it to desktop for later',
+        ],
+        correctIndex: 1,
+        explanation: 'Separate-channel verification reduces the chance of opening malicious files.',
+      },
+    ],
+  },
+  {
+    id: 'inbox-triage',
+    topicId: 'phishing-awareness',
+    title: 'Inbox Triage',
+    summary: 'Sort a messy inbox into safe, unsafe, and verify-first actions.',
+    story: 'A manager, a vendor, and a courier all send messages that need quick triage.',
+    difficulty: 'Intermediate',
+    xpReward: 110,
+    questions: [
+      {
+        id: 'inbox-triage-q1',
+        prompt: 'Which response is best for a wire-transfer request from a new supplier?',
+        options: [
+          'Approve it if the invoice looks polished',
+          'Call the supplier using a known number before doing anything',
+          'Reply with banking details to speed up the process',
+          'Delay it until the next quarter',
+        ],
+        correctIndex: 1,
+        explanation: 'Financial requests should be verified out-of-band before any action is taken.',
+      },
+      {
+        id: 'inbox-triage-q2',
+        prompt: 'What is the best indicator that a password-reset email is fake?',
+        options: [
+          'It uses a generic greeting',
+          'It includes the company logo',
+          'The link destination does not match the official domain',
+          'It arrives on a Monday morning',
+        ],
+        correctIndex: 2,
+        explanation: 'Mismatched domains are one of the quickest ways to spot a fake reset page.',
+      },
+      {
+        id: 'inbox-triage-q3',
+        prompt: 'If you are unsure about a message, what is the safest first move?',
+        options: [
+          'Delete it without noting the sender',
+          'Verify it through a trusted channel and report it if needed',
+          'Open all attached files to inspect them',
+          'Keep it for later and continue working',
+        ],
+        correctIndex: 1,
+        explanation: 'Verification and reporting help protect both you and the wider team.',
+      },
+    ],
+  },
+  {
+    id: 'vault-builder',
+    topicId: 'password-defense',
+    title: 'Vault Builder',
+    summary: 'Choose password habits that stop credential reuse from spreading risk.',
+    story: 'A security review reveals that one leaked password could unlock several internal tools.',
+    difficulty: 'Beginner',
+    xpReward: 105,
+    questions: [
+      {
+        id: 'vault-builder-q1',
+        prompt: 'What is the strongest habit for protecting accounts?',
+        options: [
+          'Reusing a memorable password everywhere',
+          'Using a password manager plus unique passwords for each account',
+          'Changing passwords only after a breach',
+          'Saving passwords in a shared spreadsheet',
+        ],
+        correctIndex: 1,
+        explanation: 'Unique passwords and a password manager drastically reduce blast radius.',
+      },
+      {
+        id: 'vault-builder-q2',
+        prompt: 'Which factor adds the most protection after a password?',
+        options: ['Extra punctuation', 'A second factor like an authenticator app', 'The account nickname', 'A shorter password'],
+        correctIndex: 1,
+        explanation: 'Multi-factor authentication blocks access even when a password is stolen.',
+      },
+      {
+        id: 'vault-builder-q3',
+        prompt: 'What should you do when a site says your password was found in a breach?',
+        options: [
+          'Ignore it if you do not remember using the site much',
+          'Reuse the old password with a small variation',
+          'Change the password everywhere it was reused and enable MFA',
+          'Share the warning with coworkers and keep the same password',
+        ],
+        correctIndex: 2,
+        explanation: 'Any reused password should be changed immediately across affected accounts.',
+      },
+    ],
+  },
+  {
+    id: 'secure-terminal',
+    topicId: 'device-hygiene',
+    title: 'Secure Terminal',
+    summary: 'Handle device and network hygiene under pressure.',
+    story: 'You are joining a new network, locking your screen, and deciding whether to patch now or later.',
+    difficulty: 'Intermediate',
+    xpReward: 120,
+    questions: [
+      {
+        id: 'secure-terminal-q1',
+        prompt: 'What is the best response before leaving a laptop unattended?',
+        options: ['Close the lid and trust the room', 'Lock the screen immediately', 'Log out of only the browser', 'Turn the brightness down'],
+        correctIndex: 1,
+        explanation: 'A locked screen is the fastest way to protect an unattended device.',
+      },
+      {
+        id: 'secure-terminal-q2',
+        prompt: 'Why should critical updates be installed quickly?',
+        options: [
+          'They make the device louder',
+          'They close known vulnerabilities before attackers use them',
+          'They reduce battery life on purpose',
+          'They remove the need for backups',
+        ],
+        correctIndex: 1,
+        explanation: 'Patching reduces the time attackers have to exploit known flaws.',
+      },
+      {
+        id: 'secure-terminal-q3',
+        prompt: 'What is safest on public Wi-Fi?',
+        options: [
+          'Assume everything is encrypted by default',
+          'Use a trusted VPN and avoid sensitive actions when possible',
+          'Disable all passwords to move faster',
+          'Share the network with nearby strangers',
+        ],
+        correctIndex: 1,
+        explanation: 'Trusted tunnels and careful behavior lower exposure on open networks.',
+      },
+    ],
+  },
+];
+
+export const achievements: Achievement[] = [
+  {
+    id: 'first-steps',
+    title: 'First Steps',
+    description: 'Complete your first challenge.',
+    icon: '01',
+    requirement: { kind: 'completions', value: 1 },
+  },
+  {
+    id: 'double-check',
+    title: 'Double Check',
+    description: 'Complete two challenges.',
+    icon: '02',
+    requirement: { kind: 'completions', value: 2 },
+  },
+  {
+    id: 'field-operator',
+    title: 'Field Operator',
+    description: 'Complete three challenges.',
+    icon: '03',
+    requirement: { kind: 'completions', value: 3 },
+  },
+  {
+    id: 'mission-complete',
+    title: 'Mission Complete',
+    description: 'Complete every available challenge.',
+    icon: '04',
+    requirement: { kind: 'completions', value: 4 },
+  },
+  {
+    id: 'xp-100',
+    title: 'XP 100',
+    description: 'Earn 100 XP.',
+    icon: '05',
+    requirement: { kind: 'xp', value: 100 },
+  },
+  {
+    id: 'xp-200',
+    title: 'XP 200',
+    description: 'Earn 200 XP.',
+    icon: '06',
+    requirement: { kind: 'xp', value: 200 },
+  },
+  {
+    id: 'xp-300',
+    title: 'XP 300',
+    description: 'Earn 300 XP.',
+    icon: '07',
+    requirement: { kind: 'xp', value: 300 },
+  },
+  {
+    id: 'xp-400',
+    title: 'XP 400',
+    description: 'Earn 400 XP.',
+    icon: '08',
+    requirement: { kind: 'xp', value: 400 },
+  },
+  {
+    id: 'rapid-response',
+    title: 'Rapid Response',
+    description: 'Stay active and keep the progress moving.',
+    icon: '09',
+    requirement: { kind: 'completions', value: 4 },
+  },
+  {
+    id: 'final-clearance',
+    title: 'Final Clearance',
+    description: 'Reach the maximum progression tier.',
+    icon: '10',
+    requirement: { kind: 'xp', value: 500 },
+  },
+];
+
+export const challengeById = Object.fromEntries(challenges.map((challenge) => [challenge.id, challenge]));
+export const topicById = Object.fromEntries(topics.map((topic) => [topic.id, topic]));
