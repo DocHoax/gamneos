@@ -17,10 +17,10 @@
   --warning: #ffb86b;
   --danger: #ff7c86;
   --shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
-  --radius-xl: 28px;
-  --radius-lg: 22px;
-  --radius-md: 16px;
-  --radius-sm: 12px;
+  --radius-xl: 12px;
+  --radius-lg: 10px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
 }
 
 * {
@@ -36,10 +36,7 @@ body,
 body {
   margin: 0;
   color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(96, 215, 255, 0.18), transparent 30%),
-    radial-gradient(circle at top right, rgba(145, 255, 202, 0.12), transparent 26%),
-    linear-gradient(180deg, #050d18 0%, #081322 40%, #06111f 100%);
+  background: #06111f;
   min-height: 100vh;
 }
 
@@ -48,9 +45,7 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), transparent 95%);
+  background: rgba(255, 255, 255, 0.015);
 }
 
 a {
@@ -81,7 +76,7 @@ img {
 
 .app-orb {
   position: fixed;
-  border-radius: 999px;
+  border-radius: 50%;
   filter: blur(60px);
   opacity: 0.45;
   pointer-events: none;
@@ -117,7 +112,7 @@ img {
   margin: 0 auto;
   max-width: 1280px;
   backdrop-filter: blur(18px);
-  background: linear-gradient(180deg, rgba(6, 17, 31, 0.8), rgba(6, 17, 31, 0.45));
+  background: rgba(6, 17, 31, 0.96);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -140,9 +135,9 @@ img {
   place-items: center;
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: 1rem;
+  border-radius: 8px;
   color: #04111c;
-  background: linear-gradient(135deg, var(--accent), var(--primary));
+  background: var(--accent);
   box-shadow: 0 10px 30px rgba(96, 215, 255, 0.35);
 }
 
@@ -156,7 +151,7 @@ img {
 
 .nav-link {
   padding: 0.65rem 0.95rem;
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--muted);
   border: 1px solid transparent;
   transition: background 160ms ease, color 160ms ease, border-color 160ms ease, transform 160ms ease;
@@ -178,7 +173,7 @@ img {
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(13, 27, 45, 0.9), rgba(8, 18, 31, 0.95));
+  background: rgba(11, 26, 45, 0.92);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
   border-radius: var(--radius-xl);
@@ -227,7 +222,7 @@ img {
   gap: 0.45rem;
   min-height: 2.95rem;
   padding: 0.8rem 1.2rem;
-  border-radius: 999px;
+  border-radius: 8px;
   border: 1px solid transparent;
   font-weight: 700;
   transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
@@ -239,13 +234,13 @@ img {
 
 .button-primary {
   color: #03111b;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: var(--primary);
   box-shadow: 0 14px 30px rgba(96, 215, 255, 0.24);
 }
 
 .button-accent {
   color: #07131f;
-  background: linear-gradient(135deg, var(--accent), #b5ffef);
+  background: var(--accent);
   box-shadow: 0 14px 30px rgba(145, 255, 202, 0.2);
 }
 
@@ -273,7 +268,7 @@ img {
 .hero-orb {
   position: absolute;
   inset: 10% 20% 18% 10%;
-  background: radial-gradient(circle, rgba(96, 215, 255, 0.35), transparent 65%);
+  background: rgba(96, 215, 255, 0.14);
   filter: blur(6px);
 }
 
@@ -282,7 +277,7 @@ img {
   z-index: 1;
   padding: 1.2rem;
   border-radius: var(--radius-lg);
-  background: linear-gradient(160deg, rgba(8, 21, 37, 0.85), rgba(11, 26, 45, 0.68));
+  background: rgba(8, 21, 37, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -371,7 +366,7 @@ img {
   justify-content: center;
   min-height: 2rem;
   padding: 0 0.75rem;
-  border-radius: 999px;
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
@@ -402,7 +397,7 @@ img {
 
 .progress-shell {
   height: 0.8rem;
-  border-radius: 999px;
+  border-radius: 6px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.06);
 }
@@ -410,7 +405,7 @@ img {
 .progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: var(--primary);
   box-shadow: 0 10px 26px rgba(96, 215, 255, 0.24);
 }
 
@@ -439,7 +434,7 @@ img {
 .topic-dot {
   width: 0.9rem;
   height: 0.9rem;
-  border-radius: 999px;
+  border-radius: 50%;
   margin-bottom: 0.9rem;
   box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.03);
 }
@@ -508,14 +503,14 @@ img {
   place-items: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 0.8rem;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.05);
   font-weight: 800;
 }
 
 .achievement-card.unlocked {
   border-color: rgba(145, 255, 202, 0.3);
-  background: linear-gradient(180deg, rgba(22, 48, 37, 0.9), rgba(10, 22, 30, 0.95));
+  background: rgba(22, 48, 37, 0.9);
 }
 
 .attempt-list,
@@ -557,7 +552,7 @@ img {
   width: 100%;
   min-height: 3rem;
   padding: 0.85rem 1rem;
-  border-radius: 1rem;
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
@@ -579,7 +574,7 @@ img {
 
 .form-error {
   padding: 0.8rem 1rem;
-  border-radius: 1rem;
+  border-radius: 8px;
   color: #ffd9de;
   background: rgba(255, 124, 134, 0.12);
   border: 1px solid rgba(255, 124, 134, 0.24);
@@ -654,9 +649,9 @@ img {
   place-items: center;
   width: 2rem;
   height: 2rem;
-  border-radius: 999px;
+  border-radius: 50%;
   color: #06111f;
-  background: linear-gradient(135deg, var(--accent), var(--primary));
+  background: var(--accent);
   font-weight: 800;
 }
 
@@ -759,7 +754,7 @@ img {
   .result-card,
   .progress-card {
     padding: 1rem;
-    border-radius: 20px;
+    border-radius: 8px;
   }
 
   .button-row,
