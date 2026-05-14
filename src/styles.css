@@ -169,7 +169,12 @@ img {
   z-index: 1;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 3rem;
+  padding: 2.25rem 1.5rem 3.5rem;
+}
+
+.page-grid {
+  display: grid;
+  gap: 1.5rem;
 }
 
 .card {
@@ -254,7 +259,7 @@ img {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
 }
 
 .hero-visual {
@@ -300,8 +305,8 @@ img {
 .stats-row {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 1.2rem 0 0;
+  gap: 1.15rem;
+  margin: 1.35rem 0 0;
 }
 
 .level-stack,
@@ -310,7 +315,7 @@ img {
 .drag-item-list,
 .drag-zone-list {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.9rem;
 }
 
 .level-item,
@@ -324,7 +329,7 @@ img {
 
 .level-item,
 .mode-card {
-  padding: 0.95rem 1rem;
+  padding: 1.1rem 1.1rem 1rem;
 }
 
 .level-item,
@@ -357,25 +362,25 @@ img {
 }
 
 .drag-drop-card {
-  padding: 1.2rem;
+  padding: 1.35rem;
 }
 
 .drag-drop-grid {
   display: grid;
   grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 1.15rem;
+  margin-top: 1.15rem;
 }
 
 .drag-bank {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.85rem;
   align-content: start;
 }
 
 .drag-item {
   width: 100%;
-  padding: 0.9rem 1rem;
+  padding: 1rem 1rem 0.95rem;
   text-align: left;
   color: var(--text);
   cursor: grab;
@@ -388,8 +393,8 @@ img {
 
 .drop-zone {
   display: grid;
-  gap: 0.75rem;
-  padding: 0.95rem 1rem;
+  gap: 0.85rem;
+  padding: 1rem 1rem 0.95rem;
   cursor: pointer;
   border-style: dashed;
 }
@@ -428,7 +433,7 @@ img {
 }
 
 .stat-card {
-  padding: 1.1rem 1.15rem;
+  padding: 1.15rem 1.2rem;
 }
 
 .stat-label {
@@ -449,7 +454,7 @@ img {
 }
 
 .section-stack {
-  margin-top: 1.4rem;
+  margin-top: 1.75rem;
 }
 
 .section-heading {
@@ -457,11 +462,11 @@ img {
   justify-content: space-between;
   align-items: flex-end;
   gap: 1rem;
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.05rem;
 }
 
 .section-heading.compact {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.8rem;
 }
 
 .section-heading h2,
@@ -501,12 +506,12 @@ img {
 .progress-card {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
-  gap: 1.3rem;
-  padding: 1.45rem;
+  gap: 1.4rem;
+  padding: 1.5rem;
 }
 
 .progress-meter {
-  padding: 1rem;
+  padding: 1.05rem;
   border-radius: var(--radius-lg);
   background: rgba(148, 163, 184, 0.08);
 }
@@ -543,6 +548,7 @@ img {
 
 .topic-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.15rem;
 }
 
 .topic-card,
@@ -552,7 +558,7 @@ img {
 .auth-sidecard,
 .app-panel > .card,
 .dashboard-status {
-  padding: 1.3rem;
+  padding: 1.4rem;
 }
 
 .topic-dot {
@@ -586,12 +592,12 @@ img {
   display: flex;
   gap: 0.7rem;
   flex-wrap: wrap;
-  margin: 0.75rem 0 1rem;
+  margin: 0.85rem 0 1.05rem;
 }
 
 .mini-list {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .mini-list-item,
@@ -616,6 +622,7 @@ img {
 
 .two-column {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.15rem;
 }
 
 .achievement-grid {
@@ -641,7 +648,7 @@ img {
 .explanation-list,
 .feature-list {
   display: grid;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .feature-list {
@@ -653,7 +660,7 @@ img {
 .auth-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-  gap: 1rem;
+  gap: 1.15rem;
   align-items: start;
   max-width: 980px;
   margin: 0 auto;
@@ -661,8 +668,8 @@ img {
 
 .auth-form {
   display: grid;
-  gap: 0.9rem;
-  margin-top: 1.2rem;
+  gap: 1rem;
+  margin-top: 1.35rem;
 }
 
 .auth-form label {
@@ -719,17 +726,17 @@ img {
 .challenge-hero-side {
   display: grid;
   align-content: space-between;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .mini-stat {
-  padding: 1rem;
+  padding: 1.05rem;
   border-radius: var(--radius-lg);
   background: rgba(148, 163, 184, 0.08);
 }
 
 .question-stack {
-  margin-top: 1rem;
+  margin-top: 1.15rem;
 }
 
 .question-head,
@@ -743,8 +750,8 @@ img {
 
 .option-grid {
   display: grid;
-  gap: 0.7rem;
-  margin-top: 1rem;
+  gap: 0.8rem;
+  margin-top: 1.05rem;
 }
 
 .option-card {
@@ -782,7 +789,7 @@ img {
 .sticky-actions {
   position: sticky;
   bottom: 1rem;
-  padding: 0.9rem 1rem;
+  padding: 1rem 1.05rem;
   background: rgba(5, 8, 22, 0.72);
   backdrop-filter: blur(10px);
   border-radius: var(--radius-lg);
@@ -792,8 +799,8 @@ img {
 .result-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin: 1rem 0;
+  gap: 0.85rem;
+  margin: 1.05rem 0 1.15rem;
 }
 
 .explanation-item {
@@ -867,7 +874,7 @@ img {
 
 @media (max-width: 720px) {
   .page-wrap {
-    padding: 1rem 0.85rem 2rem;
+    padding: 1rem 0.85rem 2.25rem;
   }
 
   .card-hero,
