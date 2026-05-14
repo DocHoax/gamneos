@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type DragEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { achievements, challengeById, topicById } from '../data/content';
 import { useProgress } from '../context/ProgressContext';
@@ -9,13 +9,23 @@ function createAnswerState(questionIds: string[]) {
   return Object.fromEntries(questionIds.map((id) => [id, null])) as Record<string, number | null>;
 }
 
+function createDragPlacementState(itemIds: string[]) {
+  return Object.fromEntries(itemIds.map((id) => [id, null])) as Record<string, string | null>;
+}
+
 export function ChallengePage() {
   const { challengeId } = useParams();
   const navigate = useNavigate();
   const { progress, completeChallenge } = useProgress();
   const challenge = challengeId ? challengeById[challengeId] : undefined;
   const topic = challenge ? topicById[challenge.topicId] : undefined;
+  const dragDrop = challenge?.mode === 'drag-drop' ? challenge.dragDrop ?? null : null;
+  const isDragDrop = Boolean(dragDrop);
   const [answers, setAnswers] = useState<Record<string, number | null>>(() => createAnswerState(challenge?.questions.map((question) => question.id) ?? []));
+  const [dragPlacements, setDragPlacements] = useState<Record<string, string | null>>(() =>
+    createDragPlacementState(dragDrop?.items.map((item) => item.id) ?? []),
+  );
+  const [selectedDragItemId, setSelectedDragItemId] = useState<string | null>(null);
   const [result, setResult] = useState<ChallengeResult | null>(null);
 
   useEffect(() => {
@@ -24,6 +34,8 @@ export function ChallengePage() {
     }
 
     setAnswers(createAnswerState(challenge.questions.map((question) => question.id)));
+    setDragPlacements(createDragPlacementState(challenge.dragDrop?.items.map((item) => item.id) ?? []));
+    setSelectedDragItemId(null);
     setResult(null);
   }, [challengeId]);
 
@@ -52,13 +64,48 @@ export function ChallengePage() {
     setAnswers((current) => ({ ...current, [questionId]: optionIndex }));
   }
 
+  function setDragPlacement(itemId: string, zoneId: string) {
+    setDragPlacements((current) => ({ ...current, [itemId]: zoneId }));
+    setSelectedDragItemId(null);
+  }
+
+  function clearDragPlacement(itemId: string) {
+    setDragPlacements((current) => ({ ...current, [itemId]: null }));
+    if (selectedDragItemId === itemId) {
+      setSelectedDragItemId(null);
+    }
+  }
+
+  function handleDragStart(event: DragEvent<HTMLButtonElement>, itemId: string) {
+    event.dataTransfer.setData('text/plain', itemId);
+    event.dataTransfer.effectAllowed = 'move';
+    setSelectedDragItemId(itemId);
+  }
+
+  function handleDrop(event: DragEvent<HTMLDivElement>, zoneId: string) {
+    event.preventDefault();
+    const itemId = event.dataTransfer.getData('text/plain') || selectedDragItemId;
+
+    if (itemId) {
+      setDragPlacement(itemId, zoneId);
+    }
+  }
+
+  function handleZoneClick(zoneId: string) {
+    if (selectedDragItemId) {
+      setDragPlacement(selectedDragItemId, zoneId);
+    }
+  }
+
   async function handleSubmit() {
     const activeChallenge = challenge;
     if (!activeChallenge) {
       throw new Error('Mission unavailable.');
     }
 
-    const submission: ChallengeSubmission = { answers };
+    const submission: ChallengeSubmission = activeChallenge.mode === 'drag-drop'
+      ? { kind: 'drag-drop', placements: dragPlacements }
+      : { kind: 'quiz', answers };
     const nextResult = await completeChallenge(activeChallenge.id, submission);
     setResult(nextResult);
   }
@@ -75,7 +122,8 @@ export function ChallengePage() {
           <div className="topic-meta">
             <span>{challenge.difficulty}</span>
             <span>{challenge.xpReward} XP reward</span>
-            <span>{challenge.questions.length} questions</span>
+            <span>{challenge.mode === 'drag-drop' ? `${challenge.dragDrop?.items.length ?? 0} clues` : `${challenge.questions.length} questions`}</span>
+            <span>{challenge.mode === 'drag-drop' ? 'Drag & drop' : 'Question & answer'}</span>
           </div>
         </div>
         <div className="challenge-hero-side">
@@ -104,18 +152,39 @@ export function ChallengePage() {
             <StatBlock label="Unlocked this round" value={`${result.newlyUnlockedAchievementIds.length}`} />
             <StatBlock label="Recorded attempts" value={`${progress?.attempts.length ?? 0}`} />
           </div>
-          <div className="explanation-list">
-            {challenge.questions.map((question) => {
-              const selected = answers[question.id];
-              const correct = selected === question.correctIndex;
-              return (
-                <div className={`explanation-item ${correct ? 'correct' : 'wrong'}`} key={question.id}>
-                  <strong>{question.prompt}</strong>
-                  <p>{question.explanation}</p>
-                </div>
-              );
-            })}
-          </div>
+          {dragDrop ? (
+            <div className="explanation-list">
+              {dragDrop.items.map((item) => {
+                const selectedZoneId = dragPlacements[item.id];
+                const selectedZone = dragDrop.zones.find((zone) => zone.id === selectedZoneId);
+                const correctZone = dragDrop.zones.find((zone) => zone.id === item.targetZoneId);
+                const correct = selectedZoneId === item.targetZoneId;
+
+                return (
+                  <div className={`explanation-item ${correct ? 'correct' : 'wrong'}`} key={item.id}>
+                    <strong>{item.label}</strong>
+                    <p>
+                      Placed in {selectedZone?.label ?? 'nothing yet'}; correct zone is {correctZone?.label ?? 'unknown'}.
+                    </p>
+                    <small>{item.explanation}</small>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="explanation-list">
+              {challenge.questions.map((question) => {
+                const selected = answers[question.id];
+                const correct = selected === question.correctIndex;
+                return (
+                  <div className={`explanation-item ${correct ? 'correct' : 'wrong'}`} key={question.id}>
+                    <strong>{question.prompt}</strong>
+                    <p>{question.explanation}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div className="button-row">
             <Link className="button button-primary" to="/app">
               Return to dashboard
@@ -128,40 +197,126 @@ export function ChallengePage() {
           </div>
         </Card>
       ) : (
-        <div className="question-stack">
-          {challenge.questions.map((question, index) => (
-            <Card className="question-card" key={question.id}>
-              <div className="question-head">
-                <span className="eyebrow">Question {index + 1}</span>
-                <Badge>{challenge.difficulty}</Badge>
+        isDragDrop && dragDrop ? (
+          <div className="drag-drop-shell">
+            <Card className="drag-drop-card">
+              <div className="section-heading compact">
+                <div>
+                  <span className="eyebrow">Drag and drop mission</span>
+                  <h2>{dragDrop.prompt}</h2>
+                </div>
+                <Badge>{dragDrop.items.length} clues</Badge>
               </div>
-              <h2>{question.prompt}</h2>
-              <div className="option-grid">
-                {question.options.map((option, optionIndex) => {
-                  const selected = answers[question.id] === optionIndex;
-                  return (
-                    <button
-                      key={option}
-                      type="button"
-                      className={`option-card ${selected ? 'selected' : ''}`}
-                      onClick={() => setAnswer(question.id, optionIndex)}
-                    >
-                      <span>{String.fromCharCode(65 + optionIndex)}</span>
-                      <strong>{option}</strong>
-                    </button>
-                  );
-                })}
+              <p>{dragDrop.guidance}</p>
+
+              <div className="drag-drop-grid">
+                <div className="drag-bank">
+                  <span className="eyebrow">Available clues</span>
+                  <div className="drag-item-list">
+                    {dragDrop.items
+                      .filter((item) => !dragPlacements[item.id])
+                      .map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          className={`drag-item ${selectedDragItemId === item.id ? 'selected' : ''}`}
+                          draggable
+                          onDragStart={(event) => handleDragStart(event, item.id)}
+                          onClick={() => setSelectedDragItemId(item.id)}
+                        >
+                          <span>Item</span>
+                          <strong>{item.label}</strong>
+                        </button>
+                      ))}
+                  </div>
+                </div>
+
+                <div className="drag-zone-list">
+                  {dragDrop.zones.map((zone) => {
+                    const assignedItem = dragDrop.items.find((item) => dragPlacements[item.id] === zone.id) ?? null;
+
+                    return (
+                      <div
+                        key={zone.id}
+                        className={`drop-zone ${assignedItem ? 'filled' : ''}`}
+                        onDragOver={(event) => event.preventDefault()}
+                        onDrop={(event) => handleDrop(event, zone.id)}
+                        onClick={() => handleZoneClick(zone.id)}
+                      >
+                        <div className="drop-zone-head">
+                          <div>
+                            <strong>{zone.label}</strong>
+                            <small>{zone.hint}</small>
+                          </div>
+                          {assignedItem ? (
+                            <button
+                              type="button"
+                              className="drop-clear"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                clearDragPlacement(assignedItem.id);
+                              }}
+                            >
+                              Clear
+                            </button>
+                          ) : (
+                            <Badge>Drop here</Badge>
+                          )}
+                        </div>
+
+                        <div className="drop-zone-item">
+                          {assignedItem ? <strong>{assignedItem.label}</strong> : <span>Click or drag a clue into this zone</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </Card>
-          ))}
 
-          <div className="button-row sticky-actions">
-            <Button onClick={() => void handleSubmit()}>Submit mission</Button>
-            <Link className="button button-ghost" to="/app">
-              Save for later
-            </Link>
+            <div className="button-row sticky-actions">
+              <Button onClick={() => void handleSubmit()}>Submit mission</Button>
+              <Link className="button button-ghost" to="/app">
+                Save for later
+              </Link>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="question-stack">
+            {challenge.questions.map((question, index) => (
+              <Card className="question-card" key={question.id}>
+                <div className="question-head">
+                  <span className="eyebrow">Question {index + 1}</span>
+                  <Badge>{challenge.difficulty}</Badge>
+                </div>
+                <h2>{question.prompt}</h2>
+                <div className="option-grid">
+                  {question.options.map((option, optionIndex) => {
+                    const selected = answers[question.id] === optionIndex;
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        className={`option-card ${selected ? 'selected' : ''}`}
+                        onClick={() => setAnswer(question.id, optionIndex)}
+                      >
+                        <span>{String.fromCharCode(65 + optionIndex)}</span>
+                        <strong>{option}</strong>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Card>
+            ))}
+
+            <div className="button-row sticky-actions">
+              <Button onClick={() => void handleSubmit()}>Submit mission</Button>
+              <Link className="button button-ghost" to="/app">
+                Save for later
+              </Link>
+            </div>
+          </div>
+        )
       )}
     </div>
   );

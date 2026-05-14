@@ -1,11 +1,13 @@
 import { achievements, challengeById, challenges, topics } from '../data/content';
 import { useAuth } from '../context/AuthContext';
 import { useProgress } from '../context/ProgressContext';
+import { getLevelProgress } from '../lib/engine';
 import { Badge, Card, LinkButton, ProgressBar, StatCard } from '../components/ui';
 
 export function HomePage() {
   const { user } = useAuth();
   const { progress, level, completedCount } = useProgress();
+  const levelInfo = getLevelProgress(progress?.totalXp ?? 0);
   const totalQuestions = challenges.reduce((sum, challenge) => sum + challenge.questions.length, 0);
   const answeredQuestions = progress?.attempts.reduce((sum, attempt) => sum + attempt.totalQuestions, 0) ?? 0;
 
@@ -48,6 +50,56 @@ export function HomePage() {
         <StatCard label="Topics" value={`${topics.length}`} note="Phishing, passwords, devices" />
         <StatCard label="Questions" value={`${totalQuestions}`} note="Decision points to solve" />
       </div>
+
+      <section className="two-column">
+        <Card>
+          <div className="section-heading compact">
+            <div>
+              <span className="eyebrow">Game modes</span>
+              <h2>Mission styles available</h2>
+            </div>
+            <Badge>2 styles</Badge>
+          </div>
+
+          <div className="mode-grid">
+            <div className="mode-card">
+              <strong>Question & answer</strong>
+              <p>Choose the best response, compare results, and earn XP from scenario-based questions.</p>
+            </div>
+            <div className="mode-card">
+              <strong>Drag & drop</strong>
+              <p>Sort clues into the right security zone by dragging or clicking items into place.</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card>
+          <div className="section-heading compact">
+            <div>
+              <span className="eyebrow">Levels</span>
+              <h2>Campaign ladder</h2>
+            </div>
+            <Badge>Level {levelInfo.level}</Badge>
+          </div>
+
+          <div className="level-stack">
+            <div className="level-item active">
+              <div>
+                <strong>{levelInfo.name}</strong>
+                <small>{levelInfo.nextLevel ? `Next: ${levelInfo.nextLevel.name}` : 'Top tier reached'}</small>
+              </div>
+              <Badge>{levelInfo.requiredXp} XP</Badge>
+            </div>
+            <div className="level-item">
+              <div>
+                <strong>Progress to next level</strong>
+                <small>{levelInfo.nextLevel ? `${levelInfo.xpToNext} XP remaining` : 'No further level'}</small>
+              </div>
+              <Badge>{progress?.totalXp ?? 0} XP</Badge>
+            </div>
+          </div>
+        </Card>
+      </section>
 
       <section className="section-stack">
         <div className="section-heading">

@@ -1,5 +1,12 @@
 export type UserRole = 'player' | 'admin';
 
+export interface LevelTier {
+  level: number;
+  name: string;
+  requiredXp: number;
+  summary: string;
+}
+
 export interface GameUser {
   id: string;
   email: string;
@@ -7,6 +14,8 @@ export interface GameUser {
   role: UserRole;
   joinedAt: string;
 }
+
+export type ChallengeMode = 'quiz' | 'drag-drop';
 
 export interface ChallengeQuestion {
   id: string;
@@ -16,6 +25,26 @@ export interface ChallengeQuestion {
   explanation: string;
 }
 
+export interface DragDropZone {
+  id: string;
+  label: string;
+  hint: string;
+}
+
+export interface DragDropItem {
+  id: string;
+  label: string;
+  targetZoneId: string;
+  explanation: string;
+}
+
+export interface DragDropGame {
+  prompt: string;
+  guidance: string;
+  zones: DragDropZone[];
+  items: DragDropItem[];
+}
+
 export interface Challenge {
   id: string;
   topicId: string;
@@ -23,8 +52,10 @@ export interface Challenge {
   summary: string;
   story: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  mode: ChallengeMode;
   xpReward: number;
   questions: ChallengeQuestion[];
+  dragDrop?: DragDropGame;
 }
 
 export interface Topic {
@@ -65,8 +96,24 @@ export interface UserProgress {
   lastPlayedAt?: string;
 }
 
-export interface ChallengeSubmission {
+export interface QuizChallengeSubmission {
+  kind: 'quiz';
   answers: Record<string, number | null>;
+}
+
+export interface DragDropChallengeSubmission {
+  kind: 'drag-drop';
+  placements: Record<string, string | null>;
+}
+
+export type ChallengeSubmission = QuizChallengeSubmission | DragDropChallengeSubmission;
+
+export interface LevelProgressInfo {
+  level: number;
+  name: string;
+  requiredXp: number;
+  nextLevel: LevelTier | null;
+  xpToNext: number;
 }
 
 export interface ChallengeResult {

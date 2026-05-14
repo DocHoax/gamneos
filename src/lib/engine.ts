@@ -1,20 +1,52 @@
-import type { Achievement, Challenge, ChallengeSubmission, UserProgress } from '../types';
+import { levels } from '../data/content';
+import type { Achievement, Challenge, ChallengeSubmission, LevelProgressInfo, UserProgress } from '../types';
 
 export function levelFromXp(totalXp: number): number {
-  return Math.max(1, Math.floor(totalXp / 100) + 1);
+  return getLevelProgress(totalXp).level;
+}
+
+export function getLevelProgress(totalXp: number): LevelProgressInfo {
+  let currentLevel = levels[0];
+
+  for (const level of levels) {
+    if (totalXp >= level.requiredXp) {
+      currentLevel = level;
+      continue;
+    }
+
+    break;
+  }
+
+  const nextLevel = levels.find((level) => level.requiredXp > currentLevel.requiredXp) ?? null;
+
+  return {
+    level: currentLevel.level,
+    name: currentLevel.name,
+    requiredXp: currentLevel.requiredXp,
+    nextLevel,
+    xpToNext: nextLevel ? Math.max(0, nextLevel.requiredXp - totalXp) : 0,
+  };
 }
 
 export function evaluateChallenge(challenge: Challenge, submission: ChallengeSubmission) {
-  const totalQuestions = challenge.questions.length;
-  const correctCount = challenge.questions.reduce((count, question) => {
-    const selected = submission.answers[question.id];
-    return selected === question.correctIndex ? count + 1 : count;
-  }, 0);
+  const isDragDrop = challenge.mode === 'drag-drop';
+  const totalQuestions = isDragDrop ? challenge.dragDrop?.items.length ?? 0 : challenge.questions.length;
+  const correctCount = isDragDrop
+    ? (challenge.dragDrop?.items.reduce((count, item) => {
+        const selectedZoneId = submission.kind === 'drag-drop' ? submission.placements[item.id] : null;
+        return selectedZoneId === item.targetZoneId ? count + 1 : count;
+      }, 0) ?? 0)
+    : challenge.questions.reduce((count, question) => {
+        const selected = submission.kind === 'quiz' ? submission.answers[question.id] : null;
+        return selected === question.correctIndex ? count + 1 : count;
+      }, 0);
 
-  const score = Math.round((correctCount / totalQuestions) * 100);
-  const earnedXp = correctCount === totalQuestions
-    ? challenge.xpReward + 20
-    : Math.max(20, Math.round((score / 100) * challenge.xpReward));
+  const score = totalQuestions === 0 ? 0 : Math.round((correctCount / totalQuestions) * 100);
+  const earnedXp = totalQuestions === 0
+    ? challenge.xpReward
+    : correctCount === totalQuestions
+      ? challenge.xpReward + 20
+      : Math.max(20, Math.round((score / 100) * challenge.xpReward));
 
   return {
     score,

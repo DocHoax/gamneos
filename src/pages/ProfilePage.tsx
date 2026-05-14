@@ -1,11 +1,13 @@
 import { achievements } from '../data/content';
 import { useAuth } from '../context/AuthContext';
 import { useProgress } from '../context/ProgressContext';
+import { getLevelProgress } from '../lib/engine';
 import { Badge, Card, StatCard } from '../components/ui';
 
 export function ProfilePage() {
   const { user } = useAuth();
   const { progress, level } = useProgress();
+  const levelInfo = getLevelProgress(progress?.totalXp ?? 0);
   const unlocked = achievements.filter((achievement) => progress?.unlockedAchievementIds.includes(achievement.id));
 
   return (
@@ -16,7 +18,10 @@ export function ProfilePage() {
         <p>{user?.email}</p>
         <div className="topic-meta">
           <span>Member since {user ? new Date(user.joinedAt).toLocaleDateString() : '-'}</span>
-          <span>Current level {level}</span>
+          <span>
+            Current level {level} · {levelInfo.name}
+          </span>
+          <span>{levelInfo.nextLevel ? `${levelInfo.xpToNext} XP to ${levelInfo.nextLevel.name}` : 'Max level reached'}</span>
         </div>
       </Card>
 

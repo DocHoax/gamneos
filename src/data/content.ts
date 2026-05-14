@@ -1,4 +1,43 @@
-import type { Achievement, Challenge, Topic } from '../types';
+import type { Achievement, Challenge, LevelTier, Topic } from '../types';
+
+export const levels: LevelTier[] = [
+  {
+    level: 1,
+    name: 'Initiate',
+    requiredXp: 0,
+    summary: 'Learn the basics and build mission confidence.',
+  },
+  {
+    level: 2,
+    name: 'Scout',
+    requiredXp: 100,
+    summary: 'Spot common threats before they spread.',
+  },
+  {
+    level: 3,
+    name: 'Defender',
+    requiredXp: 220,
+    summary: 'Handle routine incidents with better judgment.',
+  },
+  {
+    level: 4,
+    name: 'Specialist',
+    requiredXp: 360,
+    summary: 'Respond quickly across multiple scenarios.',
+  },
+  {
+    level: 5,
+    name: 'Sentinel',
+    requiredXp: 520,
+    summary: 'Stay sharp across complex attack patterns.',
+  },
+  {
+    level: 6,
+    name: 'Master',
+    requiredXp: 700,
+    summary: 'Operate with consistent precision at scale.',
+  },
+];
 
 export const topics: Topic[] = [
   {
@@ -6,7 +45,7 @@ export const topics: Topic[] = [
     title: 'Phishing Awareness',
     description: 'Spot urgency tricks, spoofed links, and fake login prompts before they land.',
     accent: '#57d6ff',
-    challengeIds: ['phish-hunter', 'inbox-triage'],
+    challengeIds: ['phish-sifter', 'phish-hunter', 'inbox-triage'],
   },
   {
     id: 'password-defense',
@@ -26,12 +65,58 @@ export const topics: Topic[] = [
 
 export const challenges: Challenge[] = [
   {
+    id: 'phish-sifter',
+    topicId: 'phishing-awareness',
+    title: 'Phish Sifter',
+    summary: 'Drag each clue into the safe or risky zone.',
+    story: 'A triage desk needs fast judgment before anyone opens a suspicious message.',
+    difficulty: 'Beginner',
+    mode: 'drag-drop',
+    xpReward: 90,
+    questions: [],
+    dragDrop: {
+      prompt: 'Sort each clue into the correct security zone.',
+      guidance: 'Place every clue into the most accurate category before submitting.',
+      zones: [
+        { id: 'safe-signal', label: 'Safe signal', hint: 'Supports verification or lower risk' },
+        { id: 'risk-signal', label: 'Risk signal', hint: 'Suggests urgency, spoofing, or deception' },
+      ],
+      items: [
+        {
+          id: 'drag-urgency',
+          label: '"Verify within 10 minutes"',
+          targetZoneId: 'risk-signal',
+          explanation: 'Urgency is a common phishing pressure tactic.',
+        },
+        {
+          id: 'drag-domain',
+          label: 'Sender domain matches the official site',
+          targetZoneId: 'safe-signal',
+          explanation: 'Matching domains help, but still verify carefully.',
+        },
+        {
+          id: 'drag-lookalike',
+          label: 'Link opens a lookalike login page',
+          targetZoneId: 'risk-signal',
+          explanation: 'Lookalike login pages are a strong sign of phishing.',
+        },
+        {
+          id: 'drag-direct',
+          label: 'You typed the official URL yourself',
+          targetZoneId: 'safe-signal',
+          explanation: 'Direct navigation is safer than trusting a link in a message.',
+        },
+      ],
+    },
+  },
+  {
     id: 'phish-hunter',
     topicId: 'phishing-awareness',
     title: 'Phish Hunter',
     summary: 'Call out the red flags hidden in a fake account alert.',
     story: 'Your inbox lights up with a warning that your account will be suspended in 15 minutes unless you verify now.',
     difficulty: 'Beginner',
+    mode: 'quiz',
     xpReward: 100,
     questions: [
       {
@@ -79,6 +164,7 @@ export const challenges: Challenge[] = [
     summary: 'Sort a messy inbox into safe, unsafe, and verify-first actions.',
     story: 'A manager, a vendor, and a courier all send messages that need quick triage.',
     difficulty: 'Intermediate',
+    mode: 'quiz',
     xpReward: 110,
     questions: [
       {
@@ -126,6 +212,7 @@ export const challenges: Challenge[] = [
     summary: 'Choose password habits that stop credential reuse from spreading risk.',
     story: 'A security review reveals that one leaked password could unlock several internal tools.',
     difficulty: 'Beginner',
+    mode: 'quiz',
     xpReward: 105,
     questions: [
       {
@@ -168,6 +255,7 @@ export const challenges: Challenge[] = [
     summary: 'Handle device and network hygiene under pressure.',
     story: 'You are joining a new network, locking your screen, and deciding whether to patch now or later.',
     difficulty: 'Intermediate',
+    mode: 'quiz',
     xpReward: 120,
     questions: [
       {
@@ -232,7 +320,7 @@ export const achievements: Achievement[] = [
     title: 'Mission Complete',
     description: 'Complete every available challenge.',
     icon: '04',
-    requirement: { kind: 'completions', value: 4 },
+    requirement: { kind: 'completions', value: 5 },
   },
   {
     id: 'xp-100',

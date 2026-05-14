@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { achievements, challengeById } from '../data/content';
 import type { ChallengeResult, ChallengeSubmission, UserProgress } from '../types';
 import { completeChallenge as completeChallengeRecord, getProgressSnapshot } from '../services/progressService';
+import { getLevelProgress } from '../lib/engine';
 import { useAuth } from './AuthContext';
 
 interface ProgressContextValue {
@@ -70,7 +71,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   }
 
   const value = useMemo<ProgressContextValue>(() => {
-    const level = progress ? Math.max(1, Math.floor(progress.totalXp / 100) + 1) : 1;
+    const level = progress ? getLevelProgress(progress.totalXp).level : 1;
 
     return {
       progress,
