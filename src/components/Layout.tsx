@@ -27,6 +27,9 @@ export function Layout() {
               <NavLink to="/app" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
                 Dashboard
               </NavLink>
+              <NavLink to="/app/leaderboard" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
+                Leaderboard
+              </NavLink>
               <NavLink to="/app/profile" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
                 Profile
               </NavLink>

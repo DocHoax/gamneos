@@ -218,3 +218,13 @@ export async function getProgressSnapshot(userId: string) {
     level: levelFromXp(progress.totalXp),
   };
 }
+
+export function listAllProgress(): Record<string, UserProgress> {
+  if (firebaseReady) {
+    // Listing all progress requires privileged access in a real deployment.
+    // For now, when using Firebase mode, return an empty map to avoid exposing data.
+    return {};
+  }
+
+  return readAllProgress();
+}
