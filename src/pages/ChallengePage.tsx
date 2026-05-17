@@ -266,7 +266,6 @@ export function ChallengePage() {
                         onDragStart={(event) => handleDragStart(event, item.id)}
                         onClick={() => setSelectedDragItemId(item.id)}
                       >
-                        <span>Clue</span>
                         <strong>{item.label}</strong>
                       </button>
                     ))}
