@@ -388,7 +388,8 @@ drag-drop-shell {
 
 .drag-drop-grid {
   display: grid;
-  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  /* single column layout: answers on top, zones below */
+  grid-template-columns: 1fr;
   gap: 1rem;
   margin-top: 0.3rem;
   align-items: start;
@@ -403,6 +404,7 @@ drag-drop-shell {
   border: 1px solid rgba(148, 163, 184, 0.12);
   /* flat background instead of gradient */
   background: rgba(148, 163, 184, 0.06);
+  width: 100%;
 }
 
 .drag-bank-head {
@@ -416,6 +418,11 @@ drag-drop-shell {
 .drag-zone-list,
 .drag-item-list {
   gap: 0.7rem;
+}
+
+/* Drop zones grid: default single column, expand to two columns on wider screens */
+.drag-zone-list {
+  grid-template-columns: 1fr;
 }
 
 .drag-item {
@@ -520,6 +527,14 @@ drag-drop-shell {
 
   .drag-zone-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 720px) {
+  /* medium screens: show two drop lanes side-by-side */
+  .drag-zone-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
   }
 }
 
