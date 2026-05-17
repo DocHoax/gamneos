@@ -401,7 +401,8 @@ drag-drop-shell {
   padding: 0.85rem;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(148, 163, 184, 0.12);
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.08), rgba(148, 163, 184, 0.04));
+  /* flat background instead of gradient */
+  background: rgba(148, 163, 184, 0.06);
 }
 
 .drag-bank-head {
@@ -1165,9 +1166,8 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle at top left, rgba(14, 165, 233, 0.08), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.08), transparent 34%);
+  /* removed radial gradients: use a subtle flat overlay */
+  background: rgba(255, 255, 255, 0.02);
   pointer-events: none;
 }
 
@@ -1307,7 +1307,7 @@ img {
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: var(--primary);
 }
 
 .card::after {
@@ -1438,7 +1438,7 @@ img {
   position: absolute;
   inset: 0 0 auto;
   height: 2px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: var(--primary);
 }
 
 .hero-card strong,
