@@ -222,3 +222,22 @@ export async function signOut(): Promise<void> {
 
   removeItem(SESSION_KEY);
 }
+
+export function listKnownUsers(): Record<string, Pick<GameUser, 'displayName' | 'email'>> {
+  if (firebaseReady) {
+    // Firebase user directory should be queried server-side in shared deployments.
+    return {};
+  }
+
+  const users = readUsers();
+  const byId: Record<string, Pick<GameUser, 'displayName' | 'email'>> = {};
+
+  for (const u of users) {
+    byId[u.id] = {
+      displayName: u.displayName,
+      email: u.email,
+    };
+  }
+
+  return byId;
+}

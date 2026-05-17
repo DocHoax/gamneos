@@ -1,22 +1,10 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { achievements, challengeById } from '../data/content';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { challengeById } from '../data/content';
 import type { ChallengeResult, ChallengeSubmission, UserProgress } from '../types';
 import { completeChallenge as completeChallengeRecord, getProgressSnapshot } from '../services/progressService';
 import { getLevelProgress } from '../lib/engine';
-import { useAuth } from './AuthContext';
-
-interface ProgressContextValue {
-  progress: UserProgress | null;
-  level: number;
-  completedCount: number;
-  attemptsCount: number;
-  recentChallengeIds: string[];
-  unlockedAchievementIds: string[];
-  completeChallenge: (challengeId: string, submission: ChallengeSubmission) => Promise<ChallengeResult>;
-  refreshProgress: () => Promise<void>;
-}
-
-const ProgressContext = createContext<ProgressContextValue | undefined>(undefined);
+import { useAuth } from './useAuth';
+import { ProgressContext, type ProgressContextValue } from './progressContextValue';
 
 export function ProgressProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
@@ -86,19 +74,4 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   }, [progress, user]);
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
-}
-
-export function useProgress() {
-  const value = useContext(ProgressContext);
-
-  if (!value) {
-    throw new Error('useProgress must be used within a ProgressProvider');
-  }
-
-  return value;
-}
-
-export function useUnlockedAchievements() {
-  const { unlockedAchievementIds } = useProgress();
-  return achievements.filter((achievement) => unlockedAchievementIds.includes(achievement.id));
 }

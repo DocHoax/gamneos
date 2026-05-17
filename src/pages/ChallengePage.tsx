@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type DragEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { achievements, challengeById, topicById } from '../data/content';
-import { useProgress } from '../context/ProgressContext';
+import { useProgress } from '../context/useProgress';
 import type { ChallengeResult, ChallengeSubmission } from '../types';
 import { Badge, Button, Card } from '../components/ui';
 

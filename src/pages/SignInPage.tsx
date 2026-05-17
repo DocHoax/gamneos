@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { Button, Card, Input } from '../components/ui';
 
 export function SignInPage() {

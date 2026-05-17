@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { achievements, challengeById, levels, topics } from '../data/content';
-import { useAuth } from '../context/AuthContext';
-import { useProgress } from '../context/ProgressContext';
+import { useAuth } from '../context/useAuth';
+import { useProgress } from '../context/useProgress';
 import { getLevelProgress } from '../lib/engine';
 import { Badge, Card, ProgressBar, StatCard } from '../components/ui';
 

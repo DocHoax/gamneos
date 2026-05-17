@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Card, StatCard, Badge } from '../components/ui';
 import { listAllProgress } from '../services/progressService';
+import { listKnownUsers } from '../services/authService';
 import { levelFromXp } from '../lib/engine';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 function initialsFromId(id: string) {
   if (!id) return '??';
@@ -19,14 +20,24 @@ function colorFromId(id: string) {
   return `hsl(${h} 65% 55%)`;
 }
 
+function shortId(id: string) {
+  if (id.length <= 12) {
+    return id;
+  }
+
+  return `${id.slice(0, 6)}...${id.slice(-4)}`;
+}
+
 export function LeaderboardPage() {
   const { user } = useAuth();
   const [rows, setRows] = useState<Array<{ userId: string; totalXp: number; level: number; lastPlayedAt?: string }>>([]);
   const [recent, setRecent] = useState<Array<{ userId: string; challengeId: string; earnedXp: number; completedAt: string }>>([]);
   const [missionStats, setMissionStats] = useState<Record<string, number>>({});
+  const [knownUsers, setKnownUsers] = useState<Record<string, { displayName: string; email: string }>>({});
 
   useEffect(() => {
     const map = listAllProgress();
+    setKnownUsers(listKnownUsers());
 
     const playerRows = Object.values(map).map((p) => ({
       userId: p.userId,
@@ -64,6 +75,15 @@ export function LeaderboardPage() {
     return { totalPlayers, totalXp, totalAttempts };
   }, [rows, recent]);
 
+  function playerLabel(userId: string) {
+    const profile = knownUsers[userId];
+    if (!profile) {
+      return shortId(userId);
+    }
+
+    return profile.displayName || shortId(userId);
+  }
+
   return (
     <div className="leaderboard-page">
       <div className="page-hero">
@@ -86,7 +106,8 @@ export function LeaderboardPage() {
                         {initialsFromId(r.userId)}
                       </div>
                       <div>
-                        <strong className="name">{r.userId}</strong>
+                        <strong className="name">{playerLabel(r.userId)}</strong>
+                        <div className="muted small">ID: {shortId(r.userId)}</div>
                         <div className="muted small">Last played: {r.lastPlayedAt ? new Date(r.lastPlayedAt).toLocaleString() : '—'}</div>
                       </div>
                     </div>
@@ -110,7 +131,7 @@ export function LeaderboardPage() {
                   <li key={`${a.userId}-${a.challengeId}-${a.completedAt}`}>
                     <span className="small muted">{new Date(a.completedAt).toLocaleString()}</span>
                     <div>
-                      <strong>{a.userId}</strong> completed <em>{a.challengeId}</em>
+                      <strong>{playerLabel(a.userId)}</strong> completed <em>{a.challengeId}</em>
                     </div>
                     <div className="muted small">+{a.earnedXp} XP</div>
                   </li>
@@ -153,7 +174,8 @@ export function LeaderboardPage() {
             {user ? (
               <div>
                 <div className="avatar" style={{ background: colorFromId(user.id), display: 'inline-block', marginRight: 8 }}>{initialsFromId(user.id)}</div>
-                <strong>{user.id}</strong>
+                <strong>{playerLabel(user.id)}</strong>
+                <div className="muted small">ID: {shortId(user.id)}</div>
                 <div className="muted small">Signed in</div>
               </div>
             ) : (

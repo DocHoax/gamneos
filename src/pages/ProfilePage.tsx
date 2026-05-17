@@ -1,6 +1,6 @@
 import { achievements } from '../data/content';
-import { useAuth } from '../context/AuthContext';
-import { useProgress } from '../context/ProgressContext';
+import { useAuth } from '../context/useAuth';
+import { useProgress } from '../context/useProgress';
 import { getLevelProgress } from '../lib/engine';
 import { Badge, Card, StatCard } from '../components/ui';
 
