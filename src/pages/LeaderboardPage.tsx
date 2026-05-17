@@ -91,9 +91,9 @@ export function LeaderboardPage() {
         <p>Top players and recent activity (local demo).</p>
       </div>
 
-      <div className="grid grid-3">
-        <section>
-          <Card>
+      <div className="leaderboard-layout">
+        <section className="leaderboard-main">
+          <Card className="leaderboard-card">
             <h3>Top Players</h3>
             <ol className="leaderboard-list">
               {rows.length === 0 ? (
@@ -121,7 +121,7 @@ export function LeaderboardPage() {
             </ol>
           </Card>
 
-          <Card>
+          <Card className="leaderboard-card">
             <h3>Recent activity</h3>
             <ol className="recent-list">
               {recent.length === 0 ? (
@@ -141,12 +141,12 @@ export function LeaderboardPage() {
           </Card>
         </section>
 
-        <div>
+        <div className="leaderboard-stats">
           <StatCard label="Players" value={String(totals.totalPlayers)} note="Local progress entries" />
           <StatCard label="Total XP" value={String(totals.totalXp)} note="Sum across players" />
           <StatCard label="Recent Attempts" value={String(totals.totalAttempts)} note="Last 24 attempts" />
 
-          <Card>
+          <Card className="leaderboard-card">
             <h3>Top Missions</h3>
             <ol className="mission-list">
               {Object.entries(missionStats)
@@ -163,13 +163,13 @@ export function LeaderboardPage() {
           </Card>
         </div>
 
-        <aside>
-          <Card>
+        <aside className="leaderboard-sidebar">
+          <Card className="leaderboard-card">
             <h3>About</h3>
             <p className="muted small">This leaderboard reads local progress stored in your browser. For a shared leaderboard, configure Firebase and add server-side aggregation.</p>
           </Card>
 
-          <Card>
+          <Card className="leaderboard-card">
             <h3>Your account</h3>
             {user ? (
               <div>

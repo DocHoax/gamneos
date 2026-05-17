@@ -13,6 +13,17 @@ function createDragPlacementState(itemIds: string[]) {
   return Object.fromEntries(itemIds.map((id) => [id, null])) as Record<string, string | null>;
 }
 
+function shuffledIds(ids: string[]) {
+  const next = [...ids];
+
+  for (let i = next.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [next[i], next[j]] = [next[j], next[i]];
+  }
+
+  return next;
+}
+
 export function ChallengePage() {
   const { challengeId } = useParams();
   const navigate = useNavigate();
@@ -27,6 +38,7 @@ export function ChallengePage() {
   );
   const [selectedDragItemId, setSelectedDragItemId] = useState<string | null>(null);
   const [result, setResult] = useState<ChallengeResult | null>(null);
+  const [questionOrder, setQuestionOrder] = useState<string[]>([]);
 
   useEffect(() => {
     if (!challenge) {
@@ -34,10 +46,23 @@ export function ChallengePage() {
     }
 
     setAnswers(createAnswerState(challenge.questions.map((question) => question.id)));
+    setQuestionOrder(shuffledIds(challenge.questions.map((question) => question.id)));
     setDragPlacements(createDragPlacementState(challenge.dragDrop?.items.map((item) => item.id) ?? []));
     setSelectedDragItemId(null);
     setResult(null);
   }, [challengeId]);
+
+  const orderedQuestions = useMemo(() => {
+    if (!challenge || challenge.mode === 'drag-drop') {
+      return [];
+    }
+
+    const indexById = new Map(challenge.questions.map((q) => [q.id, q]));
+    const byStateOrder = questionOrder.map((id) => indexById.get(id)).filter(Boolean) as typeof challenge.questions;
+
+    // Fallback keeps compatibility if order state is missing or stale.
+    return byStateOrder.length === challenge.questions.length ? byStateOrder : challenge.questions;
+  }, [challenge, questionOrder]);
 
   const nextChallenge = useMemo(() => {
     if (!challenge || !topic) {
@@ -173,7 +198,7 @@ export function ChallengePage() {
             </div>
           ) : (
             <div className="explanation-list">
-              {challenge.questions.map((question) => {
+              {orderedQuestions.map((question) => {
                 const selected = answers[question.id];
                 const correct = selected === question.correctIndex;
                 return (
@@ -211,7 +236,10 @@ export function ChallengePage() {
 
               <div className="drag-drop-grid">
                 <div className="drag-bank">
-                  <span className="eyebrow">Available clues</span>
+                  <div className="drag-bank-head">
+                    <span className="eyebrow">Available clues</span>
+                    <span className="muted small">Drag a tile into a lane below</span>
+                  </div>
                   <div className="drag-item-list">
                     {dragDrop.items
                       .filter((item) => !dragPlacements[item.id])
@@ -265,7 +293,7 @@ export function ChallengePage() {
                         </div>
 
                         <div className="drop-zone-item">
-                          {assignedItem ? <strong>{assignedItem.label}</strong> : <span>Click or drag a clue into this zone</span>}
+                          {assignedItem ? <strong>{assignedItem.label}</strong> : <span>Drop or click a clue into this lane</span>}
                         </div>
                       </div>
                     );
@@ -283,7 +311,7 @@ export function ChallengePage() {
           </div>
         ) : (
           <div className="question-stack">
-            {challenge.questions.map((question, index) => (
+            {orderedQuestions.map((question, index) => (
               <Card className="question-card" key={question.id}>
                 <div className="question-head">
                   <span className="eyebrow">Question {index + 1}</span>

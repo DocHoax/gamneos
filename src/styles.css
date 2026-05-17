@@ -178,6 +178,7 @@ img {
 }
 
 .card {
+  padding: 1.15rem;
   background: rgba(10, 16, 31, 0.95);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -309,13 +310,26 @@ img {
   margin: 1.35rem 0 0;
 }
 
-.level-stack,
-.mode-grid,
-.drag-drop-shell,
-.drag-item-list,
-.drag-zone-list {
+level-stack,
+mode-grid,
+drag-drop-shell {
   display: grid;
   gap: 0.9rem;
+}
+
+/* Clue tile rail: horizontal, wrapping flex so items align nicely */
+.drag-item-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  align-items: flex-start;
+}
+
+/* Drop zone collection: keep as grid so lanes can form columns, but align to start */
+.drag-zone-list {
+  display: grid;
+  gap: 0.7rem;
+  align-items: start;
 }
 
 .level-item,
@@ -362,61 +376,117 @@ img {
 }
 
 .drag-drop-card {
-  padding: 1.35rem;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.drag-drop-shell {
+  display: grid;
+  gap: 1rem;
 }
 
 .drag-drop-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
-  gap: 1.15rem;
-  margin-top: 1.15rem;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  gap: 1rem;
+  margin-top: 0.3rem;
+  align-items: start;
 }
 
 .drag-bank {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.7rem;
   align-content: start;
+  padding: 0.85rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.08), rgba(148, 163, 184, 0.04));
+}
+
+.drag-bank-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0 0.15rem;
+}
+
+.drag-zone-list,
+.drag-item-list {
+  gap: 0.7rem;
 }
 
 .drag-item {
-  width: 100%;
-  padding: 1rem 1rem 0.95rem;
+  padding: 0.7rem 0.8rem;
   text-align: left;
   color: var(--text);
   cursor: grab;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 3.5rem;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.14);
+  border-radius: 10px;
+  background-clip: padding-box;
+  /* flexible sizing in the rail */
+  flex: 0 1 220px;
 }
 
 .drag-item.selected {
-  border-color: rgba(96, 215, 255, 0.45);
-  background: rgba(96, 215, 255, 0.08);
+  border-color: rgba(96, 215, 255, 0.6);
+  background: rgba(96, 215, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.drag-item span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .drop-zone {
   display: grid;
-  gap: 0.85rem;
-  padding: 1rem 1rem 0.95rem;
+  gap: 0.6rem;
+  padding: 0.75rem 0.8rem;
   cursor: pointer;
   border-style: dashed;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  min-height: 4.25rem;
+  align-content: start;
 }
 
 .drop-zone.filled {
   border-style: solid;
-  border-color: rgba(145, 255, 202, 0.3);
+  border-color: rgba(145, 255, 202, 0.42);
+  background: rgba(145, 255, 202, 0.08);
 }
 
 .drop-zone-head {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.85rem;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .drop-zone-item {
-  min-height: 3rem;
+  min-height: 3.5rem; /* match clue tile height for consistent baseline */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(15, 23, 42, 0.72);
 }
 
 .drop-zone-item span {
@@ -430,6 +500,43 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
   color: var(--text);
+}
+
+.drag-drop-card .section-heading.compact {
+  margin-bottom: 0.4rem;
+}
+
+.drag-drop-card > p {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (min-width: 1025px) {
+  .drag-item-list {
+    /* wider screens: allow more items per row but keep them as a horizontal rail */
+    gap: 0.9rem;
+  }
+
+  .drag-zone-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .drag-item {
+    min-height: 3.25rem;
+    flex: 1 1 100%;
+  }
+
+  .drag-drop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .drag-item-list,
+  .drag-zone-list {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
 }
 
 .stat-card {
@@ -454,6 +561,8 @@ img {
 }
 
 .section-stack {
+  display: grid;
+  gap: 1.25rem;
   margin-top: 1.75rem;
 }
 
@@ -736,6 +845,8 @@ img {
 }
 
 .question-stack {
+  display: grid;
+  gap: 1.15rem;
   margin-top: 1.15rem;
 }
 
@@ -832,6 +943,105 @@ img {
 
 .panel-header {
   margin-bottom: 1rem;
+}
+
+.leaderboard-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.8fr) minmax(260px, 0.85fr);
+  gap: 1.35rem;
+  align-items: start;
+}
+
+.leaderboard-main,
+.leaderboard-stats,
+.leaderboard-sidebar {
+  display: grid;
+  gap: 1.2rem;
+  align-content: start;
+}
+
+.leaderboard-card {
+  padding: 1.25rem;
+}
+
+.leaderboard-card h3 {
+  margin: 0 0 0.75rem;
+}
+
+.leaderboard-list,
+.recent-list,
+.mission-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.leader-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(148, 163, 184, 0.06);
+}
+
+.leader-left {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.leader-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.avatar {
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  color: #020617;
+  font-weight: 800;
+  font-size: 0.78rem;
+  flex: 0 0 auto;
+}
+
+.name {
+  display: block;
+  line-height: 1.2;
+}
+
+.xp {
+  font-weight: 700;
+}
+
+.recent-list li,
+.mission-list li {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(148, 163, 184, 0.05);
+}
+
+.small {
+  font-size: 0.83rem;
+  line-height: 1.35;
+}
+
+.muted {
+  color: var(--muted);
 }
 
 @keyframes drift {
@@ -1084,6 +1294,7 @@ img {
 .card {
   position: relative;
   overflow: hidden;
+  padding: 1.15rem;
   background: rgba(10, 16, 31, 0.95);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -1431,6 +1642,8 @@ img {
 }
 
 .section-stack {
+  display: grid;
+  gap: 1.25rem;
   margin-top: 2rem;
 }
 
@@ -1776,6 +1989,8 @@ img {
 }
 
 .question-stack {
+  display: grid;
+  gap: 1.25rem;
   margin-top: 1.25rem;
 }
 
@@ -1927,6 +2142,10 @@ img {
   }
 
   .achievement-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .leaderboard-layout {
     grid-template-columns: 1fr;
   }
 }
