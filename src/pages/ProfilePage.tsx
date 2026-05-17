@@ -2,6 +2,7 @@ import { achievements } from '../data/content';
 import { useAuth } from '../context/useAuth';
 import { useProgress } from '../context/useProgress';
 import { getLevelProgress } from '../lib/engine';
+import { AchievementCard } from '../components/AchievementCard';
 import { Badge, Card, StatCard } from '../components/ui';
 
 export function ProfilePage() {
@@ -42,18 +43,10 @@ export function ProfilePage() {
             <Badge>{unlocked.length}/{achievements.length}</Badge>
           </div>
 
-          <div className="achievement-grid">
+          <div className="achievement-badge-grid">
             {achievements.map((achievement) => {
               const active = progress?.unlockedAchievementIds.includes(achievement.id) ?? false;
-              return (
-                <div key={achievement.id} className={`achievement-card ${active ? 'unlocked' : ''}`}>
-                  <span>{achievement.icon}</span>
-                  <div>
-                    <strong>{achievement.title}</strong>
-                    <small>{achievement.description}</small>
-                  </div>
-                </div>
-              );
+              return <AchievementCard key={achievement.id} achievement={achievement} unlocked={active} />;
             })}
           </div>
         </Card>

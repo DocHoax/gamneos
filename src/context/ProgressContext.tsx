@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { challengeById } from '../data/content';
-import type { ChallengeResult, ChallengeSubmission, UserProgress } from '../types';
+import type { ChallengeResult, ChallengeSubmission, MissionSession, UserProgress } from '../types';
 import { completeChallenge as completeChallengeRecord, getProgressSnapshot } from '../services/progressService';
 import { getLevelProgress } from '../lib/engine';
 import { useAuth } from './useAuth';
@@ -43,7 +43,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setProgress(await getProgressSnapshot(user.id));
   }
 
-  async function completeChallenge(challengeId: string, submission: ChallengeSubmission) {
+  async function completeChallenge(challengeId: string, submission: ChallengeSubmission, session?: MissionSession) {
     if (!user) {
       throw new Error('You must be signed in to complete a challenge.');
     }
@@ -53,7 +53,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       throw new Error('Challenge not found.');
     }
 
-    const result = await completeChallengeRecord(user, challenge, submission);
+    const result = await completeChallengeRecord(user, challenge, submission, session);
     setProgress(await getProgressSnapshot(user.id));
     return result;
   }

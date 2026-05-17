@@ -611,6 +611,7 @@ export const achievements: Achievement[] = [
     title: 'First Steps',
     description: 'Complete your first challenge.',
     icon: '01',
+    badgeTier: 'bronze',
     requirement: { kind: 'completions', value: 1 },
   },
   {
@@ -618,6 +619,7 @@ export const achievements: Achievement[] = [
     title: 'Double Check',
     description: 'Complete two challenges.',
     icon: '02',
+    badgeTier: 'bronze',
     requirement: { kind: 'completions', value: 2 },
   },
   {
@@ -625,6 +627,7 @@ export const achievements: Achievement[] = [
     title: 'Field Operator',
     description: 'Complete three challenges.',
     icon: '03',
+    badgeTier: 'silver',
     requirement: { kind: 'completions', value: 3 },
   },
   {
@@ -632,6 +635,7 @@ export const achievements: Achievement[] = [
     title: 'Mission Complete',
     description: 'Complete every available challenge.',
     icon: '04',
+    badgeTier: 'gold',
     requirement: { kind: 'completions', value: 5 },
   },
   {
@@ -639,6 +643,7 @@ export const achievements: Achievement[] = [
     title: 'XP 100',
     description: 'Earn 100 XP.',
     icon: '05',
+    badgeTier: 'bronze',
     requirement: { kind: 'xp', value: 100 },
   },
   {
@@ -646,6 +651,7 @@ export const achievements: Achievement[] = [
     title: 'XP 200',
     description: 'Earn 200 XP.',
     icon: '06',
+    badgeTier: 'silver',
     requirement: { kind: 'xp', value: 200 },
   },
   {
@@ -653,6 +659,7 @@ export const achievements: Achievement[] = [
     title: 'XP 300',
     description: 'Earn 300 XP.',
     icon: '07',
+    badgeTier: 'gold',
     requirement: { kind: 'xp', value: 300 },
   },
   {
@@ -660,6 +667,7 @@ export const achievements: Achievement[] = [
     title: 'XP 400',
     description: 'Earn 400 XP.',
     icon: '08',
+    badgeTier: 'gold',
     requirement: { kind: 'xp', value: 400 },
   },
   {
@@ -667,6 +675,7 @@ export const achievements: Achievement[] = [
     title: 'Rapid Response',
     description: 'Stay active and keep the progress moving.',
     icon: '09',
+    badgeTier: 'platinum',
     requirement: { kind: 'completions', value: 4 },
   },
   {
@@ -674,6 +683,7 @@ export const achievements: Achievement[] = [
     title: 'Final Clearance',
     description: 'Reach the maximum progression tier.',
     icon: '10',
+    badgeTier: 'platinum',
     requirement: { kind: 'xp', value: 500 },
   },
 ];

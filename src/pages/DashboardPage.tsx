@@ -3,8 +3,8 @@ import { achievements, challengeById, levels, topics } from '../data/content';
 import { useAuth } from '../context/useAuth';
 import { useProgress } from '../context/useProgress';
 import { getLevelProgress } from '../lib/engine';
+import { AchievementCard } from '../components/AchievementCard';
 import { Badge, Card, ProgressBar, StatCard } from '../components/ui';
-
 export function DashboardPage() {
   const { user } = useAuth();
   const { progress, level, completedCount, attemptsCount, unlockedAchievementIds } = useProgress();
@@ -152,18 +152,10 @@ export function DashboardPage() {
             <Badge>{unlockedAchievements.length}/{achievements.length}</Badge>
           </div>
 
-          <div className="achievement-grid">
+          <div className="achievement-badge-grid">
             {achievements.map((achievement) => {
               const unlocked = unlockedAchievementIds.includes(achievement.id);
-              return (
-                <div key={achievement.id} className={`achievement-card ${unlocked ? 'unlocked' : ''}`}>
-                  <span>{achievement.icon}</span>
-                  <div>
-                    <strong>{achievement.title}</strong>
-                    <small>{achievement.description}</small>
-                  </div>
-                </div>
-              );
+              return <AchievementCard key={achievement.id} achievement={achievement} unlocked={unlocked} />;
             })}
           </div>
         </Card>

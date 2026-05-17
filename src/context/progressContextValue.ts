@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { ChallengeResult, ChallengeSubmission, UserProgress } from '../types';
+import type { ChallengeResult, ChallengeSubmission, MissionSession, UserProgress } from '../types';
 
 export interface ProgressContextValue {
   progress: UserProgress | null;
@@ -8,7 +8,11 @@ export interface ProgressContextValue {
   attemptsCount: number;
   recentChallengeIds: string[];
   unlockedAchievementIds: string[];
-  completeChallenge: (challengeId: string, submission: ChallengeSubmission) => Promise<ChallengeResult>;
+  completeChallenge: (
+    challengeId: string,
+    submission: ChallengeSubmission,
+    session?: MissionSession,
+  ) => Promise<ChallengeResult>;
   refreshProgress: () => Promise<void>;
 }
 

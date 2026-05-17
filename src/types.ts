@@ -70,12 +70,21 @@ export type AchievementRequirement =
   | { kind: 'completions'; value: number }
   | { kind: 'xp'; value: number };
 
+export type AchievementBadgeTier = 'bronze' | 'silver' | 'gold' | 'platinum';
+
 export interface Achievement {
   id: string;
   title: string;
   description: string;
   icon: string;
+  badgeTier: AchievementBadgeTier;
   requirement: AchievementRequirement;
+}
+
+export interface MissionSession {
+  challengeId: string;
+  questions: ChallengeQuestion[];
+  dragDrop?: DragDropGame;
 }
 
 export interface ChallengeAttempt {

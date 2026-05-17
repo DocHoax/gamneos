@@ -1,5 +1,5 @@
 import { levels } from '../data/content';
-import type { Achievement, Challenge, ChallengeSubmission, LevelProgressInfo, UserProgress } from '../types';
+import type { Achievement, Challenge, ChallengeSubmission, LevelProgressInfo, MissionSession, UserProgress } from '../types';
 
 export function levelFromXp(totalXp: number): number {
   return getLevelProgress(totalXp).level;
@@ -28,15 +28,17 @@ export function getLevelProgress(totalXp: number): LevelProgressInfo {
   };
 }
 
-export function evaluateChallenge(challenge: Challenge, submission: ChallengeSubmission) {
+export function evaluateChallenge(challenge: Challenge, submission: ChallengeSubmission, session?: MissionSession) {
   const isDragDrop = challenge.mode === 'drag-drop';
-  const totalQuestions = isDragDrop ? challenge.dragDrop?.items.length ?? 0 : challenge.questions.length;
+  const activeDragDrop = session?.dragDrop ?? challenge.dragDrop;
+  const activeQuestions = session?.questions ?? challenge.questions;
+  const totalQuestions = isDragDrop ? activeDragDrop?.items.length ?? 0 : activeQuestions.length;
   const correctCount = isDragDrop
-    ? (challenge.dragDrop?.items.reduce((count, item) => {
+    ? (activeDragDrop?.items.reduce((count, item) => {
         const selectedZoneId = submission.kind === 'drag-drop' ? submission.placements[item.id] : null;
         return selectedZoneId === item.targetZoneId ? count + 1 : count;
       }, 0) ?? 0)
-    : challenge.questions.reduce((count, question) => {
+    : activeQuestions.reduce((count, question) => {
         const selected = submission.kind === 'quiz' ? submission.answers[question.id] : null;
         return selected === question.correctIndex ? count + 1 : count;
       }, 0);

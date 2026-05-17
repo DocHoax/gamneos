@@ -1,4 +1,5 @@
 import { achievements, challengeById, challenges, topics } from '../data/content';
+import { MISSION_QUESTION_COUNT } from '../lib/questionGenerator';
 import { useAuth } from '../context/useAuth';
 import { useProgress } from '../context/useProgress';
 import { getLevelProgress } from '../lib/engine';
@@ -8,7 +9,7 @@ export function HomePage() {
   const { user } = useAuth();
   const { progress, level, completedCount } = useProgress();
   const levelInfo = getLevelProgress(progress?.totalXp ?? 0);
-  const totalQuestions = challenges.reduce((sum, challenge) => sum + challenge.questions.length, 0);
+  const totalQuestions = challenges.length * MISSION_QUESTION_COUNT;
   const answeredQuestions = progress?.attempts.reduce((sum, attempt) => sum + attempt.totalQuestions, 0) ?? 0;
 
   return (

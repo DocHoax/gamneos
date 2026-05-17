@@ -1,5 +1,5 @@
 import { achievements } from '../data/content';
-import type { Challenge, ChallengeResult, ChallengeSubmission, GameUser, UserProgress } from '../types';
+import type { Challenge, ChallengeResult, ChallengeSubmission, GameUser, MissionSession, UserProgress } from '../types';
 import { createId, readJson, writeJson } from '../lib/storage';
 import { doc, getDoc, runTransaction, setDoc } from 'firebase/firestore';
 import { firebaseReady, getFirebaseDb } from '../lib/firebase';
@@ -94,6 +94,7 @@ export async function completeChallenge(
   user: GameUser,
   challenge: Challenge,
   submission: ChallengeSubmission,
+  session?: MissionSession,
 ): Promise<ChallengeResult> {
   if (firebaseReady) {
     const ref = getProgressRef(user.id);
@@ -101,7 +102,7 @@ export async function completeChallenge(
     return runTransaction(getFirebaseDb()!, async (transaction) => {
       const snapshot = await transaction.get(ref);
       const current = normalizeProgress(user.id, snapshot.exists() ? (snapshot.data() as Partial<UserProgress>) : undefined);
-      const evaluation = evaluateChallenge(challenge, submission);
+      const evaluation = evaluateChallenge(challenge, submission, session);
       const alreadyCompleted = current.completedChallengeIds.includes(challenge.id);
       const earnedXp = alreadyCompleted ? 0 : evaluation.earnedXp;
       const nextCompletedChallengeIds = alreadyCompleted
@@ -158,7 +159,7 @@ export async function completeChallenge(
 
   const progressMap = readAllProgress();
   const current = progressMap[user.id] ?? createEmptyProgress(user.id);
-  const evaluation = evaluateChallenge(challenge, submission);
+  const evaluation = evaluateChallenge(challenge, submission, session);
   const alreadyCompleted = current.completedChallengeIds.includes(challenge.id);
   const earnedXp = alreadyCompleted ? 0 : evaluation.earnedXp;
   const nextCompletedChallengeIds = alreadyCompleted
